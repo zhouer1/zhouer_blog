@@ -1,6 +1,6 @@
 ---
-title: Example Category
-description: A description of this category
+title: essay
+description: pieces and epiphanies of life 
 image:
 
 # Badge style
