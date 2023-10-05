@@ -1,3 +1,26 @@
 /*
     You can add your own custom styles here.
 */
+
+// 归档栏目去除阴影，添加hover动画
+.widget.archives .widget-archive--list{
+    box-shadow: none;
+    .archives-year{
+        transition-duration: 0.5s;
+        transition-property: transform;
+        -webkit-transition-duration: 0.5s;
+        -webkit-transition-property: transform;
+    }
+    .archives-year:hover{
+        transform: scale(0.95);
+        -webkit-transform: scale(0.95);
+    }
+}
+
+// 标签去除阴影
+.tagCloud .tagCloud-tags{
+    box-shadow: none;
+    a{
+        box-shadow: none;
+    }
+}

@@ -2,7 +2,7 @@
 title: 奔跑
 description: 
 slug: chasing
-date: 2023-10-04 00:00:00+0000
+date: 2023-02-17 00:00:00+0000
 image: cover.jpg
 categories:
     - essay
