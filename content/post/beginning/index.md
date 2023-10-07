@@ -1,6 +1,5 @@
 ---
 title: 起源
-description: 这个博主似乎有点任性...
 slug: beginning
 date: 2023-10-04 00:00:00+0000
 tags:

@@ -24,3 +24,11 @@ url = "https://twitter.com/zhur370065"
 
 [social.params]
 icon = "brand-x"
+
+[[social]]
+identifier = "email"
+name = "email"
+url = "mailto:zhouer1mail@qq.com"
+
+[social.params]
+icon = "mail"
