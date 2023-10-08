@@ -44,7 +44,7 @@ weight: 1
 
 ![browser_img_1](https://cdn.jsdelivr.net/gh/zhouer1/resource/img/browser_img_1.jpeg)
 
-这个套娃让我顿感好奇<span class="overlay" onmouseover="toggleOverlay(this)" onmouseleave="toggleOverlay(this)">恼羞成怒</span>，与此同时我也陷入了一种混乱之中：Chrome浏览器不是内置了Google搜索引擎吗，为什么还有Google这个应用？那Chrome里的Google是什么？Google又是什么？百度又是什么？我是谁我在哪......
+这个套娃让我顿感好奇<span class="overlay" onmouseover="toggleOverlay(this)" onmouseleave="toggleOverlay(this)" ontouchstart="toggleOverlay(this)" ontouchend="toggleOverlay(this)">恼羞成怒</span>，与此同时我也陷入了一种混乱之中：Chrome浏览器不是内置了Google搜索引擎吗，为什么还有Google这个应用？那Chrome里的Google是什么？Google又是什么？百度又是什么？我是谁我在哪......
 
 于是我以实际情况作为问题询问了GPT：
 
@@ -86,7 +86,6 @@ GPT给出了明确解答，Google应用并不能看作浏览器，虽然Google�
 
 <script>
 function toggleOverlay(element) {
-    console.log(1)
   element.classList.toggle('clicked');
 }
 </script>
