@@ -2,6 +2,7 @@
 title: 起源
 slug: beginning
 date: 2023-10-04 00:00:00+0000
+image: https://cdn.jsdelivr.net/gh/zhouer1/resource/img/nodoka_blog_shashinn.jpg
 tags:
     - 起源
 weight: 1

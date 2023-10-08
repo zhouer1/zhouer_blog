@@ -3,24 +3,49 @@
 */
 
 // 归档栏目去除阴影，添加hover动画
-.widget.archives .widget-archive--list{
+.widget.archives .widget-archive--list {
     box-shadow: none;
-    .archives-year{
+
+    .archives-year {
         transition-duration: 0.5s;
         transition-property: transform;
         -webkit-transition-duration: 0.5s;
         -webkit-transition-property: transform;
     }
-    .archives-year:hover{
+
+    .archives-year:hover {
         transform: scale(0.95);
         -webkit-transform: scale(0.95);
     }
 }
 
 // 标签去除阴影
-.tagCloud .tagCloud-tags{
+.tagCloud .tagCloud-tags {
     box-shadow: none;
-    a{
+
+    a {
         box-shadow: none;
     }
+}
+
+// 文字黑幕特效
+.overlay {
+    position: relative;
+    display: inline-block;
+}
+
+.overlay::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 1);
+    opacity: 1;
+    transition: opacity 0.1s ease;
+}
+
+.overlay.clicked::after {
+    opacity: 0;
 }

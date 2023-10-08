@@ -1,7 +1,7 @@
 ---
 title: essay
 description: pieces and epiphanies of life 
-image:
+image: https://cdn.jsdelivr.net/gh/zhouer1/resource/img/fountain-pen.jpg
 
 # Badge style
 style:
