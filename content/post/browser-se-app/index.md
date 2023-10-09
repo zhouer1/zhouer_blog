@@ -36,7 +36,7 @@ weight: 1
 
 ## 碎碎念
 
-其实是我在群聊里面发现了一张精美的图片<span class="overlay" onmouseover="toggleOverlay(this)" onmouseleave="toggleOverlay(this)" ontouchstart="toggleOverlay(this)" ontouchend="toggleOverlay(this)">涩图</span>，于是想顺藤摸瓜找到图源和角色。但是，当我打开Chrome之后发现居然没有图片搜索功能。
+其实是我在群聊里面发现了一张精美的图片<span class="overlay">涩图</span>，于是想顺藤摸瓜找到图源和角色。但是，当我打开Chrome之后发现居然没有图片搜索功能。
 
 想着浏览器没有这功能也能理解，于是搜索了“Google图片识别”，试图使用Google网页版直接搜图。
 
@@ -44,7 +44,7 @@ weight: 1
 
 ![browser_img_1](https://cdn.jsdelivr.net/gh/zhouer1/resource/img/browser_img_1.jpeg)
 
-这个套娃让我顿感好奇<span class="overlay" onmouseover="toggleOverlay(this)" onmouseleave="toggleOverlay(this)" ontouchstart="toggleOverlay(this)" ontouchend="toggleOverlay(this)">恼羞成怒</span>，与此同时我也陷入了一种混乱之中：Chrome浏览器不是内置了Google搜索引擎吗，为什么还有Google这个应用？那Chrome里的Google是什么？Google又是什么？百度又是什么？我是谁我在哪......
+这个套娃让我顿感好奇<span class="overlay">恼羞成怒</span>，与此同时我也陷入了一种混乱之中：Chrome浏览器不是内置了Google搜索引擎吗，为什么还有Google这个应用？那Chrome里的Google是什么？Google又是什么？百度又是什么？我是谁我在哪......
 
 于是我以实际情况作为问题询问了GPT：
 
@@ -85,7 +85,38 @@ GPT给出了明确解答，Google应用并不能看作浏览器，虽然Google�
 [ChatGPT镜像站友情链接](https://chat.liu.xyz/)
 
 <script>
-function toggleOverlay(element) {
-  element.classList.toggle('clicked');
+let elements = document.getElementsByClassName("overlay");
+let elementsArray = Array.from(elements);
+
+elementsArray.forEach((element) => {
+  element.addEventListener('mouseover', handleEvent);
+  element.addEventListener('mouseleave', handleEvent);
+  element.addEventListener('touchstart', handleEvent);
+  element.addEventListener('touchend', handleEvent);
+})
+
+function handleEvent(event) {
+  if (isMobileDevice()) {
+    if (event.type === 'touchstart') {
+      // 处理触摸开始事件
+      event.target.classList.toggle('clicked');
+    } else if (event.type === 'touchend') {
+      // 处理触摸结束事件
+      event.target.classList.toggle('clicked');
+    }
+  } else {
+    if (event.type === 'mouseover') {
+      // 处理鼠标移入事件
+      event.target.classList.toggle('clicked');
+    } else if (event.type === 'mouseleave') {
+      // 处理鼠标移出事件
+      event.target.classList.toggle('clicked');
+    }
+  }
 }
+
+function isMobileDevice() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 </script>
