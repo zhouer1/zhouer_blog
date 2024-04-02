@@ -6,6 +6,8 @@ date: 2023-02-17 00:00:00+0000
 image: cover.jpg
 categories:
     - essay
+tags:
+    - 成长
 weight: 1
 ---
 

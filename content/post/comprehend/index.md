@@ -7,10 +7,7 @@ image: https://cdn.jsdelivr.net/gh/zhouer1/resource/img/comprehend_cover.png
 categories:
     - essay
 tags:
-    - 前端
-    - Vue
-    - 低代码可视化大屏
-    - 编辑器
+    - 成长
 weight: 1
 ---
 半梦半醒中想到了今天在项目中遇到的问题。
