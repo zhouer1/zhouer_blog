@@ -3,7 +3,7 @@ title: 一种可视化组件实时转源码编辑功能的实现
 description: 
 slug: onlineEditor
 date: 2024-1-4 00:00:00+0000
-image: https://cdn.jsdelivr.net/gh/zhouer1/resource/img/Japanese_Chrome_Chan.jpg
+image: https://cdn.jsdelivr.net/gh/zhouer1/resource/img/cover.png
 categories:
     - note
 tags:
