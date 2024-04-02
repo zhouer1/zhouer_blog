@@ -5,7 +5,7 @@ slug: comprehend
 date: 2023-10-29 04:45:00+0000
 image: https://cdn.jsdelivr.net/gh/zhouer1/resource/img/comprehend_cover.png
 categories:
-    - note
+    - essay
 tags:
     - 前端
     - Vue
