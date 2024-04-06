@@ -3,7 +3,7 @@ title: 奔跑
 description: 
 slug: chasing
 date: 2023-02-17 00:00:00+0000
-image: cover.jpg
+image: https://cdn.jsdelivr.net/gh/zhouer1/resource/img/chasing_cover.png
 categories:
     - essay
 tags:
@@ -18,3 +18,5 @@ weight: 1
 但是想法归想法，每次遇到这种情况时，我的双腿像是被灌了铅似的迈不开，维持原速，就这样走过去，然后眼睁睁地看着车子开走。
 
 上次出门，又见一辆公交车开来，我突然跑了起来，已经过了五秒，没有乘客上下车，果然跑起来也追不上啊。但是，司机看到奔跑的我，没有启动，而是等了我，于是我赶上了。
+
+[封面出处](https://www.pixiv.net/artworks/116418300)
