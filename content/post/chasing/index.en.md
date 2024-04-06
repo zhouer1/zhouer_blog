@@ -17,4 +17,6 @@ But thoughts are thoughts, and every time I encountered this situation, my legs 
 
 The last time I went out, I saw a bus coming again, I suddenly ran, it had been five seconds, there were no passengers getting on or off the bus. Well, I really couldn't catch up even if I ran. But the driver saw me running and instead of starting, he waited for me, so I caught up.
 
+---
+
 [cover](https://www.pixiv.net/artworks/116418300)
