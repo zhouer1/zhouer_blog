@@ -2,7 +2,7 @@
 title: 素晴动画第三部第6集吐槽
 description: 不知道晓枣看完是什么感觉呢...
 slug: post3
-date: 2024-05-15 23:40:00+0000
+date: 2024-05-14 23:40:00+0000
 image: https://cdn.jsdelivr.net/gh/zhouer1/resource/img/post3_cover.jpg
 categories:
     - tattle
