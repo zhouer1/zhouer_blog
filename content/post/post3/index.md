@@ -1,11 +1,3 @@
-<!--
- * @Author: zhouer1 1528634948@qq.com
- * @Date: 2024-05-16 00:47:57
- * @LastEditors: zhouer1 1528634948@qq.com
- * @LastEditTime: 2024-05-16 00:52:53
- * @FilePath: \zhouer_blog\content\post\post3\index.md
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
--->
 ---
 title: 素晴动画第三部第6集吐槽
 description: 不知道晓枣看完是什么感觉呢...
