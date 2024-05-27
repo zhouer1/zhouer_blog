@@ -3,7 +3,7 @@ title: 清除浮动
 description: 
 slug: post4
 date: 2024-05-24 21:55:00+0000
-image: https://cdn.jsdelivr.net/gh/zhouer1/resource/img/post4_cover.jpg
+image: https://cdn.jsdelivr.net/gh/zhouer1/resource/img/post4_cover.png
 categories:
     - note
 tags:
