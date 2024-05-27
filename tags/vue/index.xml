@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Vue on 淍儿的博客</title><link>https://blog.zhouer.xyz/tags/vue/</link><description>Recent content in Vue on 淍儿的博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 04 Jan 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.zhouer.xyz/tags/vue/index.xml" rel="self" type="application/rss+xml"/><item><title>一种可视化组件实时转源码编辑功能的实现</title><link>https://blog.zhouer.xyz/post/onlineeditor/</link><pubDate>Thu, 04 Jan 2024 00:00:00 +0000</pubDate><guid>https://blog.zhouer.xyz/post/onlineeditor/</guid><description>&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/cover.png" alt="Featured image of post 一种可视化组件实时转源码编辑功能的实现" />&lt;h3 id="前置条件">前置条件&lt;/h3>
+&lt;p>平台组件渲染思路：&lt;/p>
+&lt;ul>
+&lt;li>平台以JSON形式对拖拽式组件进行语法层面的组织&lt;/li>
+&lt;li>平台维护一个config.js配置文件，里面是每个组件的JSON预定义信息&lt;/li>
+&lt;li>每向平台加入一个新的组件，手动对其进行JSON的预定义&lt;/li>
+&lt;li>实例化拖拽式组件时，通过某种规则，对预定义的配置文件中的组件JSON进行转义，转成Vue语法并进行渲染&lt;/li>
+&lt;/ul>
+&lt;h3 id="基本思路">基本思路&lt;/h3>
+&lt;ol>
+&lt;li>点击按钮，展示编辑界面&lt;/li>
+&lt;li>我们可以获取当前大屏画布上的所有组件的JSON信息&lt;/li>
+&lt;li>将这些JSON信息转义为Vue源码&lt;/li>
+&lt;li>将Vue源码展示在编辑器上&lt;/li>
+&lt;li>修改Vue代码&lt;/li>
+&lt;li>点击保存按钮，将Vue代码转义为JSON&lt;/li>
+&lt;li>平台重新渲染画布&lt;/li>
+&lt;/ol>
+&lt;h3 id="savevue方法">saveVue方法&lt;/h3>
+&lt;p>用户点击保存按钮，调用saveVue方法，方法主要完成以下处理&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>通过MonacoEditor的getValue()API获取编辑器内Vue源码的内容&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>通过vue-template-compiler库的parseComponent()方法对Vue源码进行解析，并转为SFC描述对象，从SFC对象中分别提取出template,script,style标签中的内容(内容均为字符串)
+&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/parsedComponent.png"
+loading="lazy"
+alt="parsedComponent"
+>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>通过vue-template-compiler库的compile()方法对template标签里的内容进行解析，并获取其ast
+&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/ast.png"
+loading="lazy"
+alt="ast"
+>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>提取ast中与大屏画布相关的属性，使用MergeDeepAttribute方法进行合并，提取ast中与平台定义的组件的对象语法格式相关的属性，使用buildConfig方法构建全新的组件JSON(这里是直接提取所有的，全部重新构建，并不关注&amp;rsquo;改动&amp;rsquo;而只关注&amp;rsquo;结果&amp;rsquo;，性能有待提升)
+&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/handleAST.png"
+loading="lazy"
+alt="handleAST"
+>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>分别对script和style标签进行处理，如果有内容，将其添置于大屏画布JSON中，如果没有内容则不做处理&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>关闭对话框，返回大屏画布页面，此时画布会重新渲染，组件被更新&lt;/p>
+&lt;/li>
+&lt;/ol></description></item><item><title>一个Vue组件间通信与组件实例化的冲突问题</title><link>https://blog.zhouer.xyz/post/collide/</link><pubDate>Tue, 17 Oct 2023 21:10:00 +0000</pubDate><guid>https://blog.zhouer.xyz/post/collide/</guid><description>&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/post1_cover.jpg" alt="Featured image of post 一个Vue组件间通信与组件实例化的冲突问题" />&lt;p>项目需求：搜索框输入搜索内容，点击搜索按钮时跳转至另一个页面，根据搜索内容展示数据。&lt;/p>
+&lt;p>场景：两个组件间通信，父组件触发事件并传递数据，子组件作为一个页面被展示&lt;/p>
+&lt;p>由于子组件是通过router-view渲染到父组件中的，并没有直接在模板中写入子组件的标签，所以不能通过props直接传递数据。这时第一时间想到的是全局事件总线，于是尝试了以下代码&lt;/p>
+&lt;p>父组件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">handleClick&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 跳转
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">$router&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">push&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;/search/list&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 触发事件
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">$bus&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">$emit&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;search&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">data&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>子组件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">created&lt;/span>&lt;span class="p">(){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">$bus&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">$on&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;search&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">handleEvent&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">method&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 自定义事件的回调
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">handleEvent&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">data&lt;/span>&lt;span class="p">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 尝试使用data作为参数发送网络请求
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">query&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">data&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 发送网络请求
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">query&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">data&lt;/span>&lt;span class="p">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">http&lt;/span>&lt;span class="p">(...)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这种写法最终导致了一些怪异的行为，无法达成需求。后面尝试更换了一下生命周期钩子，触发网络请求的时机等等，结果就是错误也跟着变，变得千奇百怪。&lt;/p>
+&lt;p>其实导致错误的原因很简单：组件实例化的过程是在路由跳转之后才开始的，而实例化是需要时间的，在父组件触发自定义事件的时间点，子组件的实例化进行到哪一步根本无从知晓，所以很容易错过对事件的处理。&lt;/p>
+&lt;p>至于后面，还有更多匪夷所思的错误，比如参数在传递的过程中丢掉了，请求回了数据页面却不能成功渲染，等等&amp;hellip;&amp;hellip;但是既然这种处理方式从一开始就存在严重错误，后面的继发性错误也就相对没有那么大的讨论价值。&lt;/p>
+&lt;p>解决方案：&lt;/p>
+&lt;p>这个问题的实质就是组件间通信与组件实例化过程之间的冲突。目前能想到两种解决方案：&lt;/p>
+&lt;ol>
+&lt;li>确保在进行组件间通信时组件实例已经创建完成：将数据存储在共享状态（vuex,pinia等）中，确保组件实例已经创建完成，（如created钩子）从共享状态获取数据，再发起网络请求。&lt;/li>
+&lt;li>在组件实例化之前就将参数传递给目标组件：&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>使用vueRouter传递props&lt;/li>
+&lt;li>使用params参数&lt;/li>
+&lt;li>两者结合&lt;/li>
+&lt;/ul></description></item><item><title>基于ElementUI的前端表单验证</title><link>https://blog.zhouer.xyz/post/formvalidation/</link><pubDate>Tue, 20 Jun 2023 00:00:00 +0000</pubDate><guid>https://blog.zhouer.xyz/post/formvalidation/</guid><description>&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/formValidation_cover.jpg" alt="Featured image of post 基于ElementUI的前端表单验证" />&lt;p>做项目离不开表单验证，我们使用element自带的表单验证方法来进行表单验证&lt;/p>
+&lt;p>考虑以下表单:&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vue" data-lang="vue">&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">el-form&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;login_form&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">el-form-item&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">el-input&lt;/span> &lt;span class="nt">:prefix-icon&lt;/span>&lt;span class="s">=&amp;#34;User&amp;#34;&lt;/span> &lt;span class="nt">v-model&lt;/span>&lt;span class="s">=&amp;#34;loginForm.username&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="err">&amp;lt;/&lt;/span>&lt;span class="na">el&lt;/span>&lt;span class="nt">-input&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">&amp;lt;&lt;/span>&lt;span class="err">/el-form-item&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">el-form-item&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">el-input&lt;/span> &lt;span class="na">type&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;password&amp;#34;&lt;/span> &lt;span class="nt">:prefix-icon&lt;/span>&lt;span class="s">=&amp;#34;Lock&amp;#34;&lt;/span> &lt;span class="na">v&lt;/span>&lt;span class="err">-&lt;/span> &lt;span class="na">model&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;loginForm.password&amp;#34;&lt;/span> &lt;span class="na">show&lt;/span>&lt;span class="nt">-password&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="err">/el-input&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">&amp;lt;&lt;/span>&lt;span class="err">/el-form-item&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">el-button&lt;/span> &lt;span class="nt">:loading&lt;/span>&lt;span class="s">=&amp;#34;loading&amp;#34;&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;login_btn&amp;#34;&lt;/span> &lt;span class="na">type&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;primary&amp;#34;&lt;/span> &lt;span class="na">size&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;default&amp;#34;&lt;/span> &lt;span class="nt">@click&lt;/span>&lt;span class="s">=&amp;#34;login&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="na">登录&lt;/span>&lt;span class="err">&amp;lt;/&lt;/span>&lt;span class="na">el&lt;/span>&lt;span class="nt">-button&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="err">/el-form&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这个表单含有一个用户名和一个密码，现在我们要求使用element自带的验证方法对用户名和密码的长度进行简单的验证&lt;/p>
+&lt;h3 id="不完全的表单验证">不完全的表单验证&lt;/h3>
+&lt;p>要使用element的表单验证，我们需要一些相应的准备工作：&lt;/p>
+&lt;ul>
+&lt;li>首先我们应该使用v-model将整个表单绑定到一个数据对象上（注意，为了收集表单信息，我们已经将每一个input输入框绑定到了数据对象的相应属性，但是对于表单验证来说，这是不够的）&lt;/li>
+&lt;li>然后，我们在form-item组件上使用prop将form-item绑定到数据对象的相应属性，这样一来，表单就在&lt;strong>自己的表单元素&lt;/strong>和&lt;strong>数据对象&lt;/strong>之间建立了连接&lt;/li>
+&lt;li>紧接着我们应该向表单提供一个校验规则对象&lt;code>rules&lt;/code>，表单将根据这个对象对数据进行校验&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vue" data-lang="vue">&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">el-form&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;login_form&amp;#34;&lt;/span> &lt;span class="nt">v-model&lt;/span>&lt;span class="s">=&amp;#34;loginForm&amp;#34; &lt;/span>&lt;span class="nt">:rules&lt;/span>&lt;span class="s">=&amp;#34;rules&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">el-form-item&lt;/span> &lt;span class="na">prop&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;username&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">el-input&lt;/span> &lt;span class="nt">:prefix-icon&lt;/span>&lt;span class="s">=&amp;#34;User&amp;#34;&lt;/span> &lt;span class="nt">v-model&lt;/span>&lt;span class="s">=&amp;#34;loginForm.username&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="err">&amp;lt;/&lt;/span>&lt;span class="na">el&lt;/span>&lt;span class="nt">-input&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">&amp;lt;&lt;/span>&lt;span class="err">/el-form-item&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">el-form-item&lt;/span> &lt;span class="na">prop&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;password&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">el-input&lt;/span> &lt;span class="na">type&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;password&amp;#34;&lt;/span> &lt;span class="nt">:prefix-icon&lt;/span>&lt;span class="s">=&amp;#34;Lock&amp;#34;&lt;/span> &lt;span class="na">v&lt;/span>&lt;span class="err">-&lt;/span> &lt;span class="na">model&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;loginForm.password&amp;#34;&lt;/span> &lt;span class="na">show&lt;/span>&lt;span class="nt">-password&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="err">/el-input&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">&amp;lt;&lt;/span>&lt;span class="err">/el-form-item&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">el-button&lt;/span> &lt;span class="nt">:loading&lt;/span>&lt;span class="s">=&amp;#34;loading&amp;#34;&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;login_btn&amp;#34;&lt;/span> &lt;span class="na">type&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;primary&amp;#34;&lt;/span> &lt;span class="na">size&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;default&amp;#34;&lt;/span> &lt;span class="nt">@click&lt;/span>&lt;span class="s">=&amp;#34;login&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="na">登录&lt;/span>&lt;span class="err">&amp;lt;/&lt;/span>&lt;span class="na">el&lt;/span>&lt;span class="nt">-button&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="err">/el-form&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>经过以上准备工作，我们只需按照element的规定定义好rules对象，表单验证就可以工作了&lt;/p>
+&lt;p>首先我们使用element自带的简单验证方法，按照其提供的一些常用属性配置校验规则
+required: 必填
+min: 最小长度
+max: 最大长度
+message: 验证不通过时的提示信息
+trigger: 触发事件，分为blur和change&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-ts" data-lang="ts">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">rules&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="nx">username&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">[&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>&lt;span class="nx">required&lt;/span>: &lt;span class="kt">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">min&lt;/span>:&lt;span class="kt">5&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">max&lt;/span>:&lt;span class="kt">10&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s1">&amp;#39;请输入5~10位用户名&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s1">&amp;#39;change&amp;#39;&lt;/span>&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="nx">password&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">[&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="p">{&lt;/span>&lt;span class="nx">required&lt;/span>: &lt;span class="kt">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">min&lt;/span>:&lt;span class="kt">6&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">max&lt;/span>:&lt;span class="kt">15&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s1">&amp;#39;请输入6~15位密码&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s1">&amp;#39;change&amp;#39;&lt;/span>&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>配置好这个对象后，element就可以对表单进行简易的验证，并对用户抛出错误提示信息。&lt;/p>
+&lt;p>但是这样仅仅只能对用户产生提示，而不能对程序产生真正的控制，假设在输入不合格规范的情况下，用户仍然点击了登录按钮，那么程序还是会发出请求。&lt;/p>
+&lt;h3 id="基于element规则的表单验证">基于element规则的表单验证&lt;/h3>
+&lt;p>我们需要在验证后获取结果，并让程序对登录业务产生实际的控制（也就是验证成功就发请求，验证不成功就拦截）。这里需要用到element的form表单组件提供的一个方法 &lt;code>validate()&lt;/code>，它会返回一个成功或者失败的promise，我们只要在登录请求发出之前调用表单的这个方法进行校验，再做出相应的处理即可。但是首先，我们需要获取到表单实例，才能调用到这个方法。&lt;/p>
+&lt;p>对表单添加ref:&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vue" data-lang="vue">&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">el-form&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;login_form&amp;#34;&lt;/span> &lt;span class="nt">v-model&lt;/span>&lt;span class="s">=&amp;#34;loginForm&amp;#34; :rules=&amp;#34;rules&amp;#34; ref=&amp;#34;loginFormInstance&amp;#34;&amp;gt;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s"> &amp;lt;el-form-item prop=&amp;#34;username&amp;#34;&amp;gt;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s"> &amp;lt;el-input :prefix-icon=&amp;#34;User&amp;#34; v-model=&amp;#34;loginForm.username&amp;#34;&amp;gt;&amp;lt;/el-input&amp;gt;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s"> &amp;lt;/el-form-item&amp;gt;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s"> &amp;lt;el-form-item prop=&amp;#34;password&amp;#34;&amp;gt;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s"> &amp;lt;el-input type=&amp;#34;password&amp;#34; :prefix-icon=&amp;#34;Lock&amp;#34; v- model=&amp;#34;loginForm.password&amp;#34; show-password&amp;gt;&amp;lt;/el-input&amp;gt;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s"> &amp;lt;/el-form-item&amp;gt;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s"> &amp;lt;el-button :loading=&amp;#34;loading&amp;#34; class=&amp;#34;login_btn&amp;#34; type=&amp;#34;primary&amp;#34; size=&amp;#34;default&amp;#34; @click=&amp;#34;login&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="na">登录&lt;/span>&lt;span class="err">&amp;lt;/&lt;/span>&lt;span class="na">el&lt;/span>&lt;span class="nt">-button&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="err">/el-form&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>获取表单实例并在登录逻辑进行之前调用&lt;code>validate&lt;/code>方法：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-ts" data-lang="ts">&lt;span class="line">&lt;span class="cl">&lt;span class="c1">//获取表单元素
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="kd">let&lt;/span> &lt;span class="nx">loginFormInstance&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">ref&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">login&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kr">async&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="o">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="c1">//表单验证通过后发请求
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>    &lt;span class="c1">//validate是el-form上自带的方法
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>    &lt;span class="k">await&lt;/span> &lt;span class="nx">loginFormInstance&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">value&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">validate&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="p">......&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这样，我们就可以对表单进行简单的验证了。&lt;/p>
+&lt;p>但是这种简单的写法有很大的缺陷，那就是不够灵活，它仅仅只能对非空和长度进行验证，在大多数情况下，我们需要对用户输入的内容进行验证，比如验证身份证号，手机号，邮箱时，这些内容都具有一些特定的格式。&lt;/p>
+&lt;p>所以我们通常使用自定义校验的写法对表单内容进行验证。&lt;/p>
+&lt;p>考虑以下rules配置对象：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-ts" data-lang="ts">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">rules&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="nx">username&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">[&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="p">{&lt;/span>&lt;span class="nx">trigger&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s1">&amp;#39;change&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">validator&lt;/span>: &lt;span class="kt">validateUsername&lt;/span>&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="p">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="nx">password&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">[&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="p">{&lt;/span>&lt;span class="nx">trigger&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s1">&amp;#39;change&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">validator&lt;/span>: &lt;span class="kt">validatePassword&lt;/span>&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>实际上，这种写法就是添加了一个校验器&lt;code>validator&lt;/code>属性，它的值是一个用于表单校验的函数，把校验逻辑全部转移到了函数中。
+这种函数接收三个参数：
+rule:校验规则对象
+value:表单元素的文本内容
+callback:是一个放行函数，验证通过调用callback放行，不通过调用callback并注入错误信息
+注意参数的数量和顺序必须正确&lt;/p>
+&lt;p>考虑以下校验函数：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-ts" data-lang="ts">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">validateUsername&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">rule&lt;/span>:&lt;span class="kt">any&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">value&lt;/span>:&lt;span class="kt">any&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">callback&lt;/span>:&lt;span class="kt">any&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="nx">console&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">log&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">rule&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sr">/^\d{5,10}$/&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">test&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">value&lt;/span>&lt;span class="p">)){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="nx">callback&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="p">}&lt;/span>&lt;span class="k">else&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="nx">callback&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="nb">Error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;请输入5~10位用户名&amp;#39;&lt;/span>&lt;span class="p">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">const&lt;/span> &lt;span class="nx">validatePassword&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">rule&lt;/span>:&lt;span class="kt">any&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">value&lt;/span>:&lt;span class="kt">any&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">callback&lt;/span>:&lt;span class="kt">any&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="nx">console&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">log&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">rule&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sr">/^\d{6,15}$/&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">test&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">value&lt;/span>&lt;span class="p">)){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="nx">callback&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="p">}&lt;/span>&lt;span class="k">else&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="nx">callback&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="nb">Error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;请输入6~15位密码&amp;#39;&lt;/span>&lt;span class="p">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>可以看到我们使用正则表达式对账号和密码的长度进行了验证，验证通过则调用callback()放行，不通过则抛出错误。&lt;/p>
+&lt;p>使用这种自定义校验函数的方法，我们就可以对表单进行灵活的校验。&lt;/p>
+&lt;h3 id="更多">更多&lt;/h3>
+&lt;p>很多常见的表单业务规则会有许多复用场景，所以考虑对其进行封装&lt;/p>
+&lt;ul>
+&lt;li>对校验函数进行封装&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;span class="lnt">43
+&lt;/span>&lt;span class="lnt">44
+&lt;/span>&lt;span class="lnt">45
+&lt;/span>&lt;span class="lnt">46
+&lt;/span>&lt;span class="lnt">47
+&lt;/span>&lt;span class="lnt">48
+&lt;/span>&lt;span class="lnt">49
+&lt;/span>&lt;span class="lnt">50
+&lt;/span>&lt;span class="lnt">51
+&lt;/span>&lt;span class="lnt">52
+&lt;/span>&lt;span class="lnt">53
+&lt;/span>&lt;span class="lnt">54
+&lt;/span>&lt;span class="lnt">55
+&lt;/span>&lt;span class="lnt">56
+&lt;/span>&lt;span class="lnt">57
+&lt;/span>&lt;span class="lnt">58
+&lt;/span>&lt;span class="lnt">59
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="cm">/* 验证统一社会信用代码 */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">export&lt;/span> &lt;span class="kd">function&lt;/span> &lt;span class="nx">isUSCI&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">rule&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">value&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="nx">usci&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">value&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">?&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="nb">Error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;请输入有效统一社会信用代码。&amp;#39;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm">/* 验证IP地址 */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">export&lt;/span> &lt;span class="kd">function&lt;/span> &lt;span class="nx">checkIp&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">rule&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">value&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="nx">isIP&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">value&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">?&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="nb">Error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;请输入有效IP地址。&amp;#39;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm">/* 验证身份证号 */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">export&lt;/span> &lt;span class="kd">function&lt;/span> &lt;span class="nx">checkIdCard&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">rule&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">value&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="nx">Validator&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">isValid&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">value&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">?&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="nb">Error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;请输入有效身份证号码。&amp;#39;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm">/* 验证邮箱 */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">export&lt;/span> &lt;span class="kd">function&lt;/span> &lt;span class="nx">checkEmail&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">rule&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">value&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="nx">isEmail&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">value&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">?&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="nb">Error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;请输入有效邮箱。&amp;#39;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm">/* 验证邮政编码 */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">export&lt;/span> &lt;span class="kd">function&lt;/span> &lt;span class="nx">checkZip&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">rule&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">value&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="kr">const&lt;/span> &lt;span class="nx">reg&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="sr">/^\d{6}$/&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="nx">reg&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">test&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">value&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">?&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="nb">Error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;请输入有效邮政编码。&amp;#39;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm">/* 手机验证 */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">export&lt;/span> &lt;span class="kd">function&lt;/span> &lt;span class="nx">checkMobile&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">rule&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">value&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="nx">isMobilePhone&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">value&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;zh-CN&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;zh-HK&amp;#39;&lt;/span>&lt;span class="p">])&lt;/span> &lt;span class="o">?&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="nb">Error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;请输入有效手机号码。&amp;#39;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm">/* 电话验证 */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">export&lt;/span> &lt;span class="kd">function&lt;/span> &lt;span class="nx">checkTel&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">rule&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">value&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="kr">const&lt;/span> &lt;span class="nx">reg&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="sr">/^(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$/&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="nx">reg&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">test&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">value&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">?&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="nx">callback&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="nb">Error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;请输入有效电话号码。&amp;#39;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>对规则集进行封装&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">required&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">message&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="k">return&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="nx">required&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">trigger&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;blur&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;change&amp;#39;&lt;/span>&lt;span class="p">]}},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">usci&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">message&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="k">return&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="nx">required&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s1">&amp;#39;string&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">validator&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">isUSCI&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">message&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="s1">&amp;#39;请输入有效统一社会信用代码。&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">trigger&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;blur&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;change&amp;#39;&lt;/span>&lt;span class="p">]}},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">idCard&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">message&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="k">return&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="nx">required&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">type&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="s1">&amp;#39;string&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">validator&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">checkIdCard&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">message&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="s1">&amp;#39;请输入有效身份证号码。&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">trigger&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;blur&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;change&amp;#39;&lt;/span>&lt;span class="p">]}},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">email&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">message&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="k">return&lt;/span> &lt;span class="p">[{&lt;/span>&lt;span class="nx">required&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">type&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="s1">&amp;#39;string&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">||&lt;/span> &lt;span class="s1">&amp;#39;请输入有效邮箱&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">trigger&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;blur&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;change&amp;#39;&lt;/span>&lt;span class="p">]},&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="nx">validator&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">checkEmail&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s1">&amp;#39;请输入有效邮箱&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;blur&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;change&amp;#39;&lt;/span>&lt;span class="p">]}]},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">mobile&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">message&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="k">return&lt;/span> &lt;span class="p">[{&lt;/span>&lt;span class="nx">required&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">type&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="s1">&amp;#39;string&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">||&lt;/span> &lt;span class="s1">&amp;#39;请输入有效手机号码&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">trigger&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;blur&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;change&amp;#39;&lt;/span>&lt;span class="p">]},&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="nx">validator&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">checkMobile&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s1">&amp;#39;请输入有效手机号码&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">trigger&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;blur&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;change&amp;#39;&lt;/span>&lt;span class="p">]}]},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">tel&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">message&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="k">return&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="nx">required&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">validator&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">checkTel&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s1">&amp;#39;请输入有效电话号码&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">type&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;blur&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;change&amp;#39;&lt;/span>&lt;span class="p">]}},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">ip&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">message&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="k">return&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="nx">required&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">type&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="s1">&amp;#39;string&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">validator&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">checkIp&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">||&lt;/span> &lt;span class="s1">&amp;#39;请输入有效IP地址&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">trigger&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;blur&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;change&amp;#39;&lt;/span>&lt;span class="p">]}},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">zip&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">message&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">=&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="k">return&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="nx">required&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">type&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="s1">&amp;#39;string&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">validator&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">checkZip&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">message&lt;/span>&lt;span class="o">||&lt;/span> &lt;span class="s1">&amp;#39;请输入有效邮政编码&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">trigger&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">trigger&lt;/span> &lt;span class="o">||&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;blur&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;change&amp;#39;&lt;/span>&lt;span class="p">]}}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>使用实例：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-html" data-lang="html">&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">x-form-item&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;form-label&amp;#34;&lt;/span> &lt;span class="na">cols&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;1&amp;#34;&lt;/span> &lt;span class="na">label&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;作　　者:&amp;#34;&lt;/span> &lt;span class="na">prop&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;_AUTHOR&amp;#34;&lt;/span> &lt;span class="na">:rules&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;Rules.required(&amp;#39;请输入作者姓名&amp;#39;)&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">el-input&lt;/span> &lt;span class="na">v-model&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;formData._AUTHOR&amp;#34;&lt;/span> &lt;span class="na">placeholder&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;请输入作者&amp;#34;&lt;/span> &lt;span class="p">/&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">x-form-item&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">script&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">import&lt;/span> &lt;span class="nx">Rules&lt;/span> &lt;span class="nx">from&lt;/span> &lt;span class="s1">&amp;#39;...&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">script&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item></channel></rss>

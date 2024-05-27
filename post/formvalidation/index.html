@@ -1,0 +1,347 @@
+<!doctype html><html lang=zh-cn dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content='主要是对输入内容的格式进行验证'><title>基于ElementUI的前端表单验证</title>
+<link rel=canonical href=https://blog.zhouer.xyz/post/formvalidation/><link rel=stylesheet href=/scss/style.min.d493a4162ea8b352211881060334bb0674167b8e6aad526ebae9a96f034b67e9.css><meta property='og:title' content='基于ElementUI的前端表单验证'><meta property='og:description' content='主要是对输入内容的格式进行验证'><meta property='og:url' content='https://blog.zhouer.xyz/post/formvalidation/'><meta property='og:site_name' content='淍儿的博客'><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='前端'><meta property='article:tag' content='Vue'><meta property='article:tag' content='ElementUI'><meta property='article:published_time' content='2023-06-20T00:00:00+00:00'><meta property='article:modified_time' content='2023-06-20T00:00:00+00:00'><meta property='og:image' content='https://cdn.jsdelivr.net/gh/zhouer1/resource/img/formValidation_cover.jpg'><meta name=twitter:title content="基于ElementUI的前端表单验证"><meta name=twitter:description content="主要是对输入内容的格式进行验证"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content='https://cdn.jsdelivr.net/gh/zhouer1/resource/img/formValidation_cover.jpg'><link rel="shortcut icon" href=/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label=切换菜单>
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_huca09340aec5d0bb6ba4b4d19d2b2704f_38906_300x0_resize_box_3.png width=300 height=300 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>🌱</span></figure><div class=site-meta><h1 class=site-name><a href=/>淍儿的博客</a></h1><h2 class=site-description>厨力是最大的生产力</h2></div></header><ol class=social-menu><li><a href=mailto:zhouer1mail@qq.com target=_blank title=email rel=me><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mail" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/><path d="M3 7l9 6 9-6"/></svg></a></li><li><a href=https://github.com/zhouer1 target=_blank title=GitHub rel=me><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li><li><a href=https://twitter.com/zhur370065 target=_blank title=Twitter rel=me><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-x" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4l11.733 16H20L8.267 4z"/><path d="M4 20l6.768-6.768m2.46-2.46L20 4"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>主页</span></a></li><li><a href=/about/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-square" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 10a3 3 0 106 0 3 3 0 00-6 0"/><path d="M6 21v-1a4 4 0 014-4h4a4 4 0 014 4v1"/><path d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"/></svg>
+<span>关于</span></a></li><li><a href=/archives/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>归档</span></a></li><div class=menu-bottom-section><li id=i18n-switch><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg>
+<select name=language onchange="window.location.href=this.selectedOptions[0].value"><option value=https://blog.zhouer.xyz/ selected>中文</option><option value=https://blog.zhouer.xyz/en/>English</option></select></li><li id=dark-mode-toggle><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>暗色模式</span></li></div></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">目录</h2><div class=widget--toc><nav id=TableOfContents><ol><li><ol><li><a href=#不完全的表单验证>不完全的表单验证</a></li><li><a href=#基于element规则的表单验证>基于element规则的表单验证</a></li><li><a href=#更多>更多</a></li></ol></li></ol></nav></div></section></aside><main class="main full-width"><article class="has-image main-article"><header class=article-header><div class=article-image><a href=/post/formvalidation/><img src=https://cdn.jsdelivr.net/gh/zhouer1/resource/img/formValidation_cover.jpg loading=lazy alt="Featured image of post 基于ElementUI的前端表单验证"></a></div><div class=article-details><header class=article-category><a href=/categories/note/ style=background-color:#2a9d8f;color:#fff>笔记</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/post/formvalidation/>基于ElementUI的前端表单验证</a></h2><h3 class=article-subtitle>主要是对输入内容的格式进行验证</h3></div><footer class=article-time><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published>Jun 20, 2023</time></div><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>阅读时长: 6 分钟</time></div></footer></div></header><section class=article-content><p>做项目离不开表单验证，我们使用element自带的表单验证方法来进行表单验证</p><p>考虑以下表单:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-vue data-lang=vue><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>el-form</span> <span class=na>class</span><span class=o>=</span><span class=s>&#34;login_form&#34;</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=p>&lt;</span><span class=nt>el-form-item</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>		<span class=p>&lt;</span><span class=nt>el-input</span> <span class=nt>:prefix-icon</span><span class=s>=&#34;User&#34;</span> <span class=nt>v-model</span><span class=s>=&#34;loginForm.username&#34;</span><span class=p>&gt;</span><span class=err>&lt;/</span><span class=na>el</span><span class=nt>-input</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=o>&lt;</span><span class=err>/el-form-item&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=p>&lt;</span><span class=nt>el-form-item</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>		<span class=p>&lt;</span><span class=nt>el-input</span> <span class=na>type</span><span class=o>=</span><span class=s>&#34;password&#34;</span> <span class=nt>:prefix-icon</span><span class=s>=&#34;Lock&#34;</span> <span class=na>v</span><span class=err>-</span> <span class=na>model</span><span class=o>=</span><span class=s>&#34;loginForm.password&#34;</span> <span class=na>show</span><span class=nt>-password</span><span class=p>&gt;</span><span class=o>&lt;</span><span class=err>/el-input&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=o>&lt;</span><span class=err>/el-form-item&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=p>&lt;</span><span class=nt>el-button</span> <span class=nt>:loading</span><span class=s>=&#34;loading&#34;</span> <span class=na>class</span><span class=o>=</span><span class=s>&#34;login_btn&#34;</span> <span class=na>type</span><span class=o>=</span><span class=s>&#34;primary&#34;</span> <span class=na>size</span><span class=o>=</span><span class=s>&#34;default&#34;</span> <span class=nt>@click</span><span class=s>=&#34;login&#34;</span><span class=p>&gt;</span><span class=na>登录</span><span class=err>&lt;/</span><span class=na>el</span><span class=nt>-button</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl><span class=o>&lt;</span><span class=err>/el-form&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>这个表单含有一个用户名和一个密码，现在我们要求使用element自带的验证方法对用户名和密码的长度进行简单的验证</p><h3 id=不完全的表单验证>不完全的表单验证</h3><p>要使用element的表单验证，我们需要一些相应的准备工作：</p><ul><li>首先我们应该使用v-model将整个表单绑定到一个数据对象上（注意，为了收集表单信息，我们已经将每一个input输入框绑定到了数据对象的相应属性，但是对于表单验证来说，这是不够的）</li><li>然后，我们在form-item组件上使用prop将form-item绑定到数据对象的相应属性，这样一来，表单就在<strong>自己的表单元素</strong>和<strong>数据对象</strong>之间建立了连接</li><li>紧接着我们应该向表单提供一个校验规则对象<code>rules</code>，表单将根据这个对象对数据进行校验</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-vue data-lang=vue><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>el-form</span> <span class=na>class</span><span class=o>=</span><span class=s>&#34;login_form&#34;</span> <span class=nt>v-model</span><span class=s>=&#34;loginForm&#34; </span><span class=nt>:rules</span><span class=s>=&#34;rules&#34;</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=p>&lt;</span><span class=nt>el-form-item</span> <span class=na>prop</span><span class=o>=</span><span class=s>&#34;username&#34;</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>		<span class=p>&lt;</span><span class=nt>el-input</span> <span class=nt>:prefix-icon</span><span class=s>=&#34;User&#34;</span> <span class=nt>v-model</span><span class=s>=&#34;loginForm.username&#34;</span><span class=p>&gt;</span><span class=err>&lt;/</span><span class=na>el</span><span class=nt>-input</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=o>&lt;</span><span class=err>/el-form-item&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=p>&lt;</span><span class=nt>el-form-item</span> <span class=na>prop</span><span class=o>=</span><span class=s>&#34;password&#34;</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>		<span class=p>&lt;</span><span class=nt>el-input</span> <span class=na>type</span><span class=o>=</span><span class=s>&#34;password&#34;</span> <span class=nt>:prefix-icon</span><span class=s>=&#34;Lock&#34;</span> <span class=na>v</span><span class=err>-</span> <span class=na>model</span><span class=o>=</span><span class=s>&#34;loginForm.password&#34;</span> <span class=na>show</span><span class=nt>-password</span><span class=p>&gt;</span><span class=o>&lt;</span><span class=err>/el-input&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=o>&lt;</span><span class=err>/el-form-item&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=p>&lt;</span><span class=nt>el-button</span> <span class=nt>:loading</span><span class=s>=&#34;loading&#34;</span> <span class=na>class</span><span class=o>=</span><span class=s>&#34;login_btn&#34;</span> <span class=na>type</span><span class=o>=</span><span class=s>&#34;primary&#34;</span> <span class=na>size</span><span class=o>=</span><span class=s>&#34;default&#34;</span> <span class=nt>@click</span><span class=s>=&#34;login&#34;</span><span class=p>&gt;</span><span class=na>登录</span><span class=err>&lt;/</span><span class=na>el</span><span class=nt>-button</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl><span class=o>&lt;</span><span class=err>/el-form&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>经过以上准备工作，我们只需按照element的规定定义好rules对象，表单验证就可以工作了</p><p>首先我们使用element自带的简单验证方法，按照其提供的一些常用属性配置校验规则
+required: 必填
+min: 最小长度
+max: 最大长度
+message: 验证不通过时的提示信息
+trigger: 触发事件，分为blur和change</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ts data-lang=ts><span class=line><span class=cl><span class=kr>const</span> <span class=nx>rules</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>username</span><span class=o>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>		<span class=p>{</span><span class=nx>required</span>: <span class=kt>true</span><span class=p>,</span> <span class=nx>min</span>:<span class=kt>5</span><span class=p>,</span> <span class=nx>max</span>:<span class=kt>10</span><span class=p>,</span> <span class=nx>message</span><span class=o>:</span> <span class=s1>&#39;请输入5~10位用户名&#39;</span><span class=p>,</span> <span class=nx>trigger</span><span class=o>:</span> <span class=s1>&#39;change&#39;</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=p>],</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>password</span><span class=o>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span><span class=nx>required</span>: <span class=kt>true</span><span class=p>,</span> <span class=nx>min</span>:<span class=kt>6</span><span class=p>,</span> <span class=nx>max</span>:<span class=kt>15</span><span class=p>,</span> <span class=nx>message</span><span class=o>:</span> <span class=s1>&#39;请输入6~15位密码&#39;</span><span class=p>,</span> <span class=nx>trigger</span><span class=o>:</span> <span class=s1>&#39;change&#39;</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>配置好这个对象后，element就可以对表单进行简易的验证，并对用户抛出错误提示信息。</p><p>但是这样仅仅只能对用户产生提示，而不能对程序产生真正的控制，假设在输入不合格规范的情况下，用户仍然点击了登录按钮，那么程序还是会发出请求。</p><h3 id=基于element规则的表单验证>基于element规则的表单验证</h3><p>我们需要在验证后获取结果，并让程序对登录业务产生实际的控制（也就是验证成功就发请求，验证不成功就拦截）。这里需要用到element的form表单组件提供的一个方法 <code>validate()</code>，它会返回一个成功或者失败的promise，我们只要在登录请求发出之前调用表单的这个方法进行校验，再做出相应的处理即可。但是首先，我们需要获取到表单实例，才能调用到这个方法。</p><p>对表单添加ref:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-vue data-lang=vue><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>el-form</span> <span class=na>class</span><span class=o>=</span><span class=s>&#34;login_form&#34;</span> <span class=nt>v-model</span><span class=s>=&#34;loginForm&#34; :rules=&#34;rules&#34; ref=&#34;loginFormInstance&#34;&gt;
+</span></span></span><span class=line><span class=cl><span class=s>	&lt;el-form-item prop=&#34;username&#34;&gt;
+</span></span></span><span class=line><span class=cl><span class=s>		&lt;el-input :prefix-icon=&#34;User&#34; v-model=&#34;loginForm.username&#34;&gt;&lt;/el-input&gt;
+</span></span></span><span class=line><span class=cl><span class=s>	&lt;/el-form-item&gt;
+</span></span></span><span class=line><span class=cl><span class=s>
+</span></span></span><span class=line><span class=cl><span class=s>	&lt;el-form-item prop=&#34;password&#34;&gt;
+</span></span></span><span class=line><span class=cl><span class=s>		&lt;el-input type=&#34;password&#34; :prefix-icon=&#34;Lock&#34; v- model=&#34;loginForm.password&#34; show-password&gt;&lt;/el-input&gt;
+</span></span></span><span class=line><span class=cl><span class=s>	&lt;/el-form-item&gt;
+</span></span></span><span class=line><span class=cl><span class=s>	&lt;el-button :loading=&#34;loading&#34; class=&#34;login_btn&#34; type=&#34;primary&#34; size=&#34;default&#34; @click=&#34;login&#34;</span><span class=p>&gt;</span><span class=na>登录</span><span class=err>&lt;/</span><span class=na>el</span><span class=nt>-button</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl><span class=o>&lt;</span><span class=err>/el-form&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>获取表单实例并在登录逻辑进行之前调用<code>validate</code>方法：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ts data-lang=ts><span class=line><span class=cl><span class=c1>//获取表单元素
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>let</span> <span class=nx>loginFormInstance</span> <span class=o>=</span> <span class=nx>ref</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>login</span> <span class=o>=</span> <span class=kr>async</span><span class=p>()</span> <span class=o>=&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>//表单验证通过后发请求
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=c1>//validate是el-form上自带的方法
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>await</span> <span class=nx>loginFormInstance</span><span class=p>.</span><span class=nx>value</span><span class=p>.</span><span class=nx>validate</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=p>......</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>这样，我们就可以对表单进行简单的验证了。</p><p>但是这种简单的写法有很大的缺陷，那就是不够灵活，它仅仅只能对非空和长度进行验证，在大多数情况下，我们需要对用户输入的内容进行验证，比如验证身份证号，手机号，邮箱时，这些内容都具有一些特定的格式。</p><p>所以我们通常使用自定义校验的写法对表单内容进行验证。</p><p>考虑以下rules配置对象：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ts data-lang=ts><span class=line><span class=cl><span class=kr>const</span> <span class=nx>rules</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>username</span><span class=o>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span><span class=nx>trigger</span><span class=o>:</span> <span class=s1>&#39;change&#39;</span><span class=p>,</span><span class=nx>validator</span>: <span class=kt>validateUsername</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>],</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>password</span><span class=o>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span><span class=nx>trigger</span><span class=o>:</span> <span class=s1>&#39;change&#39;</span><span class=p>,</span><span class=nx>validator</span>: <span class=kt>validatePassword</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>实际上，这种写法就是添加了一个校验器<code>validator</code>属性，它的值是一个用于表单校验的函数，把校验逻辑全部转移到了函数中。
+这种函数接收三个参数：
+rule:校验规则对象
+value:表单元素的文本内容
+callback:是一个放行函数，验证通过调用callback放行，不通过调用callback并注入错误信息
+注意参数的数量和顺序必须正确</p><p>考虑以下校验函数：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ts data-lang=ts><span class=line><span class=cl><span class=kr>const</span> <span class=nx>validateUsername</span> <span class=o>=</span> <span class=p>(</span><span class=nx>rule</span>:<span class=kt>any</span><span class=p>,</span> <span class=nx>value</span>:<span class=kt>any</span><span class=p>,</span> <span class=nx>callback</span>:<span class=kt>any</span><span class=p>)</span> <span class=o>=&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>rule</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span><span class=p>(</span><span class=sr>/^\d{5,10}$/</span><span class=p>.</span><span class=nx>test</span><span class=p>(</span><span class=nx>value</span><span class=p>)){</span>
+</span></span><span class=line><span class=cl>        <span class=nx>callback</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span><span class=k>else</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>callback</span><span class=p>(</span><span class=k>new</span> <span class=nb>Error</span><span class=p>(</span><span class=s1>&#39;请输入5~10位用户名&#39;</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>validatePassword</span> <span class=o>=</span> <span class=p>(</span><span class=nx>rule</span>:<span class=kt>any</span><span class=p>,</span> <span class=nx>value</span>:<span class=kt>any</span><span class=p>,</span> <span class=nx>callback</span>:<span class=kt>any</span><span class=p>)</span> <span class=o>=&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>rule</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span><span class=p>(</span><span class=sr>/^\d{6,15}$/</span><span class=p>.</span><span class=nx>test</span><span class=p>(</span><span class=nx>value</span><span class=p>)){</span>
+</span></span><span class=line><span class=cl>        <span class=nx>callback</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span><span class=k>else</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>callback</span><span class=p>(</span><span class=k>new</span> <span class=nb>Error</span><span class=p>(</span><span class=s1>&#39;请输入6~15位密码&#39;</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>可以看到我们使用正则表达式对账号和密码的长度进行了验证，验证通过则调用callback()放行，不通过则抛出错误。</p><p>使用这种自定义校验函数的方法，我们就可以对表单进行灵活的校验。</p><h3 id=更多>更多</h3><p>很多常见的表单业务规则会有许多复用场景，所以考虑对其进行封装</p><ul><li>对校验函数进行封装</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=cm>/* 验证统一社会信用代码 */</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>export</span> <span class=kd>function</span> <span class=nx>isUSCI</span><span class=p>(</span><span class=nx>rule</span><span class=p>,</span> <span class=nx>value</span><span class=p>,</span> <span class=nx>callback</span><span class=p>){</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>usci</span><span class=p>(</span><span class=nx>value</span><span class=p>)</span> <span class=o>?</span> <span class=nx>callback</span><span class=p>()</span> <span class=o>:</span> <span class=nx>callback</span><span class=p>(</span><span class=k>new</span> <span class=nb>Error</span><span class=p>(</span><span class=s1>&#39;请输入有效统一社会信用代码。&#39;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=cm>/* 验证IP地址 */</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>export</span> <span class=kd>function</span> <span class=nx>checkIp</span><span class=p>(</span><span class=nx>rule</span><span class=p>,</span> <span class=nx>value</span><span class=p>,</span> <span class=nx>callback</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>isIP</span><span class=p>(</span><span class=nx>value</span><span class=p>)</span> <span class=o>?</span> <span class=nx>callback</span><span class=p>()</span> <span class=o>:</span> <span class=nx>callback</span><span class=p>(</span><span class=k>new</span> <span class=nb>Error</span><span class=p>(</span><span class=s1>&#39;请输入有效IP地址。&#39;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=cm>/* 验证身份证号 */</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>export</span> <span class=kd>function</span> <span class=nx>checkIdCard</span><span class=p>(</span><span class=nx>rule</span><span class=p>,</span> <span class=nx>value</span><span class=p>,</span> <span class=nx>callback</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>Validator</span><span class=p>.</span><span class=nx>isValid</span><span class=p>(</span><span class=nx>value</span><span class=p>)</span> <span class=o>?</span> <span class=nx>callback</span><span class=p>()</span> <span class=o>:</span> <span class=nx>callback</span><span class=p>(</span><span class=k>new</span> <span class=nb>Error</span><span class=p>(</span><span class=s1>&#39;请输入有效身份证号码。&#39;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=cm>/* 验证邮箱 */</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>export</span> <span class=kd>function</span> <span class=nx>checkEmail</span> <span class=p>(</span><span class=nx>rule</span><span class=p>,</span> <span class=nx>value</span><span class=p>,</span> <span class=nx>callback</span><span class=p>){</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>isEmail</span><span class=p>(</span><span class=nx>value</span><span class=p>)</span> <span class=o>?</span> <span class=nx>callback</span><span class=p>()</span> <span class=o>:</span> <span class=nx>callback</span><span class=p>(</span><span class=k>new</span> <span class=nb>Error</span><span class=p>(</span><span class=s1>&#39;请输入有效邮箱。&#39;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=cm>/* 验证邮政编码 */</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>export</span> <span class=kd>function</span> <span class=nx>checkZip</span> <span class=p>(</span><span class=nx>rule</span><span class=p>,</span> <span class=nx>value</span><span class=p>,</span> <span class=nx>callback</span><span class=p>){</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kr>const</span> <span class=nx>reg</span> <span class=o>=</span> <span class=sr>/^\d{6}$/</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>reg</span><span class=p>.</span><span class=nx>test</span><span class=p>(</span><span class=nx>value</span><span class=p>)</span> <span class=o>?</span> <span class=nx>callback</span><span class=p>()</span> <span class=o>:</span> <span class=nx>callback</span><span class=p>(</span><span class=k>new</span> <span class=nb>Error</span><span class=p>(</span><span class=s1>&#39;请输入有效邮政编码。&#39;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=cm>/* 手机验证 */</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>export</span> <span class=kd>function</span> <span class=nx>checkMobile</span> <span class=p>(</span><span class=nx>rule</span><span class=p>,</span> <span class=nx>value</span><span class=p>,</span> <span class=nx>callback</span><span class=p>){</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>isMobilePhone</span><span class=p>(</span><span class=nx>value</span><span class=p>,</span> <span class=p>[</span><span class=s1>&#39;zh-CN&#39;</span><span class=p>,</span> <span class=s1>&#39;zh-HK&#39;</span><span class=p>])</span> <span class=o>?</span> <span class=nx>callback</span><span class=p>()</span> <span class=o>:</span> <span class=nx>callback</span><span class=p>(</span><span class=k>new</span> <span class=nb>Error</span><span class=p>(</span><span class=s1>&#39;请输入有效手机号码。&#39;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=cm>/* 电话验证 */</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>export</span> <span class=kd>function</span> <span class=nx>checkTel</span> <span class=p>(</span><span class=nx>rule</span><span class=p>,</span> <span class=nx>value</span><span class=p>,</span> <span class=nx>callback</span><span class=p>){</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kr>const</span> <span class=nx>reg</span> <span class=o>=</span> <span class=sr>/^(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$/</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>reg</span><span class=p>.</span><span class=nx>test</span><span class=p>(</span><span class=nx>value</span><span class=p>)</span> <span class=o>?</span> <span class=nx>callback</span><span class=p>()</span> <span class=o>:</span> <span class=nx>callback</span><span class=p>(</span><span class=k>new</span> <span class=nb>Error</span><span class=p>(</span><span class=s1>&#39;请输入有效电话号码。&#39;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li>对规则集进行封装</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=nx>required</span><span class=o>:</span> <span class=p>(</span><span class=nx>message</span><span class=p>,</span> <span class=nx>trigger</span><span class=p>,</span> <span class=nx>type</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span><span class=k>return</span> <span class=p>{</span><span class=nx>required</span><span class=o>:</span> <span class=kc>true</span><span class=p>,</span> <span class=nx>type</span><span class=o>:</span> <span class=nx>type</span><span class=p>,</span> <span class=nx>message</span><span class=o>:</span> <span class=nx>message</span><span class=p>,</span> <span class=nx>trigger</span><span class=o>:</span> <span class=nx>trigger</span> <span class=o>||</span> <span class=p>[</span><span class=s1>&#39;blur&#39;</span><span class=p>,</span> <span class=s1>&#39;change&#39;</span><span class=p>]}},</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>usci</span><span class=o>:</span> <span class=p>(</span><span class=nx>message</span><span class=p>,</span> <span class=nx>trigger</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span><span class=k>return</span> <span class=p>{</span><span class=nx>required</span><span class=o>:</span> <span class=kc>true</span><span class=p>,</span> <span class=nx>type</span><span class=o>:</span> <span class=s1>&#39;string&#39;</span><span class=p>,</span> <span class=nx>validator</span><span class=o>:</span> <span class=nx>isUSCI</span><span class=p>,</span> <span class=nx>message</span><span class=o>:</span> <span class=nx>message</span> <span class=o>||</span> <span class=s1>&#39;请输入有效统一社会信用代码。&#39;</span><span class=p>,</span> <span class=nx>trigger</span><span class=o>:</span> <span class=nx>trigger</span> <span class=o>||</span> <span class=p>[</span><span class=s1>&#39;blur&#39;</span><span class=p>,</span> <span class=s1>&#39;change&#39;</span><span class=p>]}},</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>idCard</span><span class=o>:</span> <span class=p>(</span><span class=nx>message</span><span class=p>,</span> <span class=nx>trigger</span><span class=p>,</span> <span class=nx>type</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span><span class=k>return</span> <span class=p>{</span><span class=nx>required</span><span class=o>:</span> <span class=kc>true</span><span class=p>,</span> <span class=nx>type</span><span class=o>:</span> <span class=nx>type</span> <span class=o>||</span> <span class=s1>&#39;string&#39;</span><span class=p>,</span> <span class=nx>validator</span><span class=o>:</span> <span class=nx>checkIdCard</span><span class=p>,</span> <span class=nx>message</span><span class=o>:</span> <span class=nx>message</span> <span class=o>||</span> <span class=s1>&#39;请输入有效身份证号码。&#39;</span><span class=p>,</span> <span class=nx>trigger</span><span class=o>:</span> <span class=nx>trigger</span> <span class=o>||</span> <span class=p>[</span><span class=s1>&#39;blur&#39;</span><span class=p>,</span> <span class=s1>&#39;change&#39;</span><span class=p>]}},</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>email</span><span class=o>:</span> <span class=p>(</span><span class=nx>message</span><span class=p>,</span> <span class=nx>trigger</span><span class=p>,</span> <span class=nx>type</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span><span class=k>return</span> <span class=p>[{</span><span class=nx>required</span><span class=o>:</span> <span class=kc>true</span><span class=p>,</span> <span class=nx>type</span><span class=o>:</span> <span class=nx>type</span> <span class=o>||</span> <span class=s1>&#39;string&#39;</span><span class=p>,</span> <span class=nx>message</span><span class=o>:</span> <span class=nx>message</span><span class=o>||</span> <span class=s1>&#39;请输入有效邮箱&#39;</span><span class=p>,</span> <span class=nx>trigger</span><span class=o>:</span> <span class=nx>trigger</span> <span class=o>||</span> <span class=p>[</span><span class=s1>&#39;blur&#39;</span><span class=p>,</span> <span class=s1>&#39;change&#39;</span><span class=p>]},</span> <span class=p>{</span><span class=nx>validator</span><span class=o>:</span> <span class=nx>checkEmail</span><span class=p>,</span> <span class=nx>message</span><span class=o>:</span> <span class=s1>&#39;请输入有效邮箱&#39;</span><span class=p>,</span> <span class=nx>trigger</span><span class=o>:</span> <span class=p>[</span><span class=s1>&#39;blur&#39;</span><span class=p>,</span> <span class=s1>&#39;change&#39;</span><span class=p>]}]},</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>mobile</span><span class=o>:</span> <span class=p>(</span><span class=nx>message</span><span class=p>,</span> <span class=nx>trigger</span><span class=p>,</span> <span class=nx>type</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span><span class=k>return</span> <span class=p>[{</span><span class=nx>required</span><span class=o>:</span> <span class=kc>true</span><span class=p>,</span> <span class=nx>type</span><span class=o>:</span> <span class=nx>type</span> <span class=o>||</span> <span class=s1>&#39;string&#39;</span><span class=p>,</span> <span class=nx>message</span><span class=o>:</span> <span class=nx>message</span><span class=o>||</span> <span class=s1>&#39;请输入有效手机号码&#39;</span><span class=p>,</span> <span class=nx>trigger</span><span class=o>:</span> <span class=nx>trigger</span> <span class=o>||</span> <span class=p>[</span><span class=s1>&#39;blur&#39;</span><span class=p>,</span> <span class=s1>&#39;change&#39;</span><span class=p>]},</span> <span class=p>{</span><span class=nx>validator</span><span class=o>:</span> <span class=nx>checkMobile</span><span class=p>,</span> <span class=nx>message</span><span class=o>:</span> <span class=s1>&#39;请输入有效手机号码&#39;</span><span class=p>,</span> <span class=nx>trigger</span><span class=o>:</span> <span class=nx>trigger</span> <span class=o>||</span> <span class=p>[</span><span class=s1>&#39;blur&#39;</span><span class=p>,</span> <span class=s1>&#39;change&#39;</span><span class=p>]}]},</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>tel</span><span class=o>:</span> <span class=p>(</span><span class=nx>message</span><span class=p>,</span> <span class=nx>trigger</span><span class=p>,</span> <span class=nx>type</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span><span class=k>return</span> <span class=p>{</span><span class=nx>required</span><span class=o>:</span> <span class=kc>true</span><span class=p>,</span> <span class=nx>validator</span><span class=o>:</span> <span class=nx>checkTel</span><span class=p>,</span> <span class=nx>message</span><span class=o>:</span> <span class=s1>&#39;请输入有效电话号码&#39;</span><span class=p>,</span> <span class=nx>trigger</span><span class=o>:</span> <span class=nx>type</span> <span class=o>||</span> <span class=p>[</span><span class=s1>&#39;blur&#39;</span><span class=p>,</span> <span class=s1>&#39;change&#39;</span><span class=p>]}},</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>ip</span><span class=o>:</span> <span class=p>(</span><span class=nx>message</span><span class=p>,</span> <span class=nx>trigger</span><span class=p>,</span> <span class=nx>type</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span><span class=k>return</span> <span class=p>{</span><span class=nx>required</span><span class=o>:</span> <span class=kc>true</span><span class=p>,</span> <span class=nx>type</span><span class=o>:</span> <span class=nx>type</span> <span class=o>||</span> <span class=s1>&#39;string&#39;</span><span class=p>,</span> <span class=nx>validator</span><span class=o>:</span> <span class=nx>checkIp</span><span class=p>,</span> <span class=nx>message</span><span class=o>:</span> <span class=nx>message</span><span class=o>||</span> <span class=s1>&#39;请输入有效IP地址&#39;</span><span class=p>,</span> <span class=nx>trigger</span><span class=o>:</span> <span class=nx>trigger</span> <span class=o>||</span> <span class=p>[</span><span class=s1>&#39;blur&#39;</span><span class=p>,</span> <span class=s1>&#39;change&#39;</span><span class=p>]}},</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>zip</span><span class=o>:</span> <span class=p>(</span><span class=nx>message</span><span class=p>,</span> <span class=nx>trigger</span><span class=p>,</span> <span class=nx>type</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span><span class=k>return</span> <span class=p>{</span><span class=nx>required</span><span class=o>:</span> <span class=kc>true</span><span class=p>,</span> <span class=nx>type</span><span class=o>:</span> <span class=nx>type</span> <span class=o>||</span> <span class=s1>&#39;string&#39;</span><span class=p>,</span> <span class=nx>validator</span><span class=o>:</span> <span class=nx>checkZip</span><span class=p>,</span> <span class=nx>message</span><span class=o>:</span> <span class=nx>message</span><span class=o>||</span> <span class=s1>&#39;请输入有效邮政编码&#39;</span><span class=p>,</span> <span class=nx>trigger</span><span class=o>:</span> <span class=nx>trigger</span> <span class=o>||</span> <span class=p>[</span><span class=s1>&#39;blur&#39;</span><span class=p>,</span> <span class=s1>&#39;change&#39;</span><span class=p>]}}</span>
+</span></span></code></pre></td></tr></table></div></div><p>使用实例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-html data-lang=html><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>x-form-item</span> <span class=na>class</span><span class=o>=</span><span class=s>&#34;form-label&#34;</span> <span class=na>cols</span><span class=o>=</span><span class=s>&#34;1&#34;</span> <span class=na>label</span><span class=o>=</span><span class=s>&#34;作　　者:&#34;</span> <span class=na>prop</span><span class=o>=</span><span class=s>&#34;_AUTHOR&#34;</span> <span class=na>:rules</span><span class=o>=</span><span class=s>&#34;Rules.required(&#39;请输入作者姓名&#39;)&#34;</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=p>&lt;</span><span class=nt>el-input</span> <span class=na>v-model</span><span class=o>=</span><span class=s>&#34;formData._AUTHOR&#34;</span> <span class=na>placeholder</span><span class=o>=</span><span class=s>&#34;请输入作者&#34;</span> <span class=p>/&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>&lt;/</span><span class=nt>x-form-item</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>script</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl><span class=kr>import</span> <span class=nx>Rules</span> <span class=nx>from</span> <span class=s1>&#39;...&#39;</span>
+</span></span><span class=line><span class=cl><span class=p>&lt;/</span><span class=nt>script</span><span class=p>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></section><footer class=article-footer><section class=article-tags><a href=/tags/%E5%89%8D%E7%AB%AF/>前端</a>
+<a href=/tags/vue/>Vue</a>
+<a href=/tags/elementui/>ElementUI</a></section><section class=article-copyright><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section><section class=article-lastmod><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<span>最后更新于 Jun 20, 2023 00:00 UTC</span></section></footer></article><aside class=related-content--wrapper><h2 class=section-title>相关文章</h2><div class=related-content><div class="flex article-list--tile"><article class=has-image><a href=/post/onlineeditor/><div class=article-image><img src=https://cdn.jsdelivr.net/gh/zhouer1/resource/img/cover.png loading=lazy data-key=onlineEditor data-hash=https://cdn.jsdelivr.net/gh/zhouer1/resource/img/cover.png></div><div class=article-details><h2 class=article-title>一种可视化组件实时转源码编辑功能的实现</h2></div></a></article><article class=has-image><a href=/post/collide/><div class=article-image><img src=https://cdn.jsdelivr.net/gh/zhouer1/resource/img/post1_cover.jpg loading=lazy data-key=collide data-hash=https://cdn.jsdelivr.net/gh/zhouer1/resource/img/post1_cover.jpg></div><div class=article-details><h2 class=article-title>一个Vue组件间通信与组件实例化的冲突问题</h2></div></a></article></div></div></aside><footer class=site-footer><section class=copyright>&copy;
+2023 -
+2024 淍儿的博客</section><section class=powerby>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>主题 <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.21.0>Stack</a></b> 由 <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a> 设计</section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

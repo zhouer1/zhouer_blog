@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bug on 淍儿的博客</title><link>https://blog.zhouer.xyz/tags/bug/</link><description>Recent content in Bug on 淍儿的博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 17 Oct 2023 21:10:00 +0000</lastBuildDate><atom:link href="https://blog.zhouer.xyz/tags/bug/index.xml" rel="self" type="application/rss+xml"/><item><title>一个Vue组件间通信与组件实例化的冲突问题</title><link>https://blog.zhouer.xyz/post/collide/</link><pubDate>Tue, 17 Oct 2023 21:10:00 +0000</pubDate><guid>https://blog.zhouer.xyz/post/collide/</guid><description>&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/post1_cover.jpg" alt="Featured image of post 一个Vue组件间通信与组件实例化的冲突问题" />&lt;p>项目需求：搜索框输入搜索内容，点击搜索按钮时跳转至另一个页面，根据搜索内容展示数据。&lt;/p>
+&lt;p>场景：两个组件间通信，父组件触发事件并传递数据，子组件作为一个页面被展示&lt;/p>
+&lt;p>由于子组件是通过router-view渲染到父组件中的，并没有直接在模板中写入子组件的标签，所以不能通过props直接传递数据。这时第一时间想到的是全局事件总线，于是尝试了以下代码&lt;/p>
+&lt;p>父组件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">handleClick&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 跳转
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">$router&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">push&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;/search/list&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 触发事件
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">$bus&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">$emit&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;search&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">data&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>子组件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">created&lt;/span>&lt;span class="p">(){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">$bus&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">$on&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;search&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">handleEvent&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">method&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 自定义事件的回调
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">handleEvent&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">data&lt;/span>&lt;span class="p">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 尝试使用data作为参数发送网络请求
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">query&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">data&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 发送网络请求
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">query&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">data&lt;/span>&lt;span class="p">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">http&lt;/span>&lt;span class="p">(...)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这种写法最终导致了一些怪异的行为，无法达成需求。后面尝试更换了一下生命周期钩子，触发网络请求的时机等等，结果就是错误也跟着变，变得千奇百怪。&lt;/p>
+&lt;p>其实导致错误的原因很简单：组件实例化的过程是在路由跳转之后才开始的，而实例化是需要时间的，在父组件触发自定义事件的时间点，子组件的实例化进行到哪一步根本无从知晓，所以很容易错过对事件的处理。&lt;/p>
+&lt;p>至于后面，还有更多匪夷所思的错误，比如参数在传递的过程中丢掉了，请求回了数据页面却不能成功渲染，等等&amp;hellip;&amp;hellip;但是既然这种处理方式从一开始就存在严重错误，后面的继发性错误也就相对没有那么大的讨论价值。&lt;/p>
+&lt;p>解决方案：&lt;/p>
+&lt;p>这个问题的实质就是组件间通信与组件实例化过程之间的冲突。目前能想到两种解决方案：&lt;/p>
+&lt;ol>
+&lt;li>确保在进行组件间通信时组件实例已经创建完成：将数据存储在共享状态（vuex,pinia等）中，确保组件实例已经创建完成，（如created钩子）从共享状态获取数据，再发起网络请求。&lt;/li>
+&lt;li>在组件实例化之前就将参数传递给目标组件：&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>使用vueRouter传递props&lt;/li>
+&lt;li>使用params参数&lt;/li>
+&lt;li>两者结合&lt;/li>
+&lt;/ul></description></item></channel></rss>

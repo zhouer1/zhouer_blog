@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>成长 on 淍儿的博客</title><link>https://blog.zhouer.xyz/tags/%E6%88%90%E9%95%BF/</link><description>Recent content in 成长 on 淍儿的博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 29 Oct 2023 04:45:00 +0000</lastBuildDate><atom:link href="https://blog.zhouer.xyz/tags/%E6%88%90%E9%95%BF/index.xml" rel="self" type="application/rss+xml"/><item><title>理解</title><link>https://blog.zhouer.xyz/post/comprehend/</link><pubDate>Sun, 29 Oct 2023 04:45:00 +0000</pubDate><guid>https://blog.zhouer.xyz/post/comprehend/</guid><description>&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/comprehend_cover.png" alt="Featured image of post 理解" />&lt;p>半梦半醒中想到了今天在项目中遇到的问题。&lt;/p>
+&lt;p>实验室平台更新UI，在改动时发现UI组件库的自定义主题使用策略与平台的复用策略或有冲突，往细了想大概是项目的依赖结构和打包方面的问题。对工程化这块确实没有了解，说白了还是webpack学艺不精，只能暗暗搁置，然后敲敲脑袋。&lt;/p>
+&lt;p>此事留待明天与师兄探讨，但是从中忽然想起了以前看的免费教学视频里的管理系统来。一套后台模板，从别人的开源项目中甄选，然后将难点与杂项除尽，留下初学者易上手的精华部分，犹如大浪淘沙。一个后台小项目，布局方法、模块结构、路由策略、业务组件、权限管理、数据大屏、主题切换，样样俱到。其中，这个主题切换，与所做改动有些关系，也是我想起这个教程的原因。&lt;/p>
+&lt;p>这时便不由得想起了一句话——麻雀虽小，五脏俱全。&lt;/p>
+&lt;p>忽然发现理解某些词句，不过一念之间，这和读书时看着课文解析，或者被老师灌输讲解，所理解到的东西，是截然不同的。恰恰，学语文，好多时候都是这样，先看答案再去会意。不知千古多少才俊，以怎样的感情凝结成诗词歌赋，被提炼成诗词解析，中心思想，就这样被我们学了去。有些东西，是学不来的。学来的，或变成笔头下的答案，或变成心中蒙蒙的认同，却无法产生共鸣。&lt;/p>
+&lt;p>也不知道多少年前，一个小男孩坐在课桌上翻了翻《字词句篇》，看着&amp;quot;麻雀虽小，五脏俱全&amp;quot;的解析——比喻事物的体积或规模虽小，具备的内容却很齐全。然后回答了老师的提问，老师欣然一笑：&amp;ldquo;理解的很到位。&amp;rdquo;&lt;/p>
+&lt;p>今天，我的理解有更进一步吗？&lt;/p></description></item><item><title>奔跑</title><link>https://blog.zhouer.xyz/post/chasing/</link><pubDate>Fri, 17 Feb 2023 00:00:00 +0000</pubDate><guid>https://blog.zhouer.xyz/post/chasing/</guid><description>&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/chasing_cover.png" alt="Featured image of post 奔跑" />&lt;p>家里下楼到公交车站大概有个六七十米的距离。&lt;/p>
+&lt;p>每次下楼远远看见刚刚到站的公交车都会默默叹一口气，然后维持原速走过去，走到一半，公交车就会开走。于是我每次都提醒自己，也许刚刚下楼时看见车到站，只要跑起来，就能赶上了。&lt;/p>
+&lt;p>但是想法归想法，每次遇到这种情况时，我的双腿像是被灌了铅似的迈不开，维持原速，就这样走过去，然后眼睁睁地看着车子开走。&lt;/p>
+&lt;p>上次出门，又见一辆公交车开来，我突然跑了起来，已经过了五秒，没有乘客上下车，果然跑起来也追不上啊。但是，司机看到奔跑的我，没有启动，而是等了我，于是我赶上了。&lt;/p>
+&lt;hr>
+&lt;p>&lt;a class="link" href="https://www.pixiv.net/artworks/116418300" target="_blank" rel="noopener"
+>封面出处&lt;/a>&lt;/p></description></item></channel></rss>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>小记 on 淍儿的博客</title><link>https://blog.zhouer.xyz/categories/essay/</link><description>Recent content in 小记 on 淍儿的博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 29 Oct 2023 04:45:00 +0000</lastBuildDate><atom:link href="https://blog.zhouer.xyz/categories/essay/index.xml" rel="self" type="application/rss+xml"/><item><title>理解</title><link>https://blog.zhouer.xyz/post/comprehend/</link><pubDate>Sun, 29 Oct 2023 04:45:00 +0000</pubDate><guid>https://blog.zhouer.xyz/post/comprehend/</guid><description>&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/comprehend_cover.png" alt="Featured image of post 理解" />&lt;p>半梦半醒中想到了今天在项目中遇到的问题。&lt;/p>
+&lt;p>实验室平台更新UI，在改动时发现UI组件库的自定义主题使用策略与平台的复用策略或有冲突，往细了想大概是项目的依赖结构和打包方面的问题。对工程化这块确实没有了解，说白了还是webpack学艺不精，只能暗暗搁置，然后敲敲脑袋。&lt;/p>
+&lt;p>此事留待明天与师兄探讨，但是从中忽然想起了以前看的免费教学视频里的管理系统来。一套后台模板，从别人的开源项目中甄选，然后将难点与杂项除尽，留下初学者易上手的精华部分，犹如大浪淘沙。一个后台小项目，布局方法、模块结构、路由策略、业务组件、权限管理、数据大屏、主题切换，样样俱到。其中，这个主题切换，与所做改动有些关系，也是我想起这个教程的原因。&lt;/p>
+&lt;p>这时便不由得想起了一句话——麻雀虽小，五脏俱全。&lt;/p>
+&lt;p>忽然发现理解某些词句，不过一念之间，这和读书时看着课文解析，或者被老师灌输讲解，所理解到的东西，是截然不同的。恰恰，学语文，好多时候都是这样，先看答案再去会意。不知千古多少才俊，以怎样的感情凝结成诗词歌赋，被提炼成诗词解析，中心思想，就这样被我们学了去。有些东西，是学不来的。学来的，或变成笔头下的答案，或变成心中蒙蒙的认同，却无法产生共鸣。&lt;/p>
+&lt;p>也不知道多少年前，一个小男孩坐在课桌上翻了翻《字词句篇》，看着&amp;quot;麻雀虽小，五脏俱全&amp;quot;的解析——比喻事物的体积或规模虽小，具备的内容却很齐全。然后回答了老师的提问，老师欣然一笑：&amp;ldquo;理解的很到位。&amp;rdquo;&lt;/p>
+&lt;p>今天，我的理解有更进一步吗？&lt;/p></description></item><item><title>起源</title><link>https://blog.zhouer.xyz/post/beginning/</link><pubDate>Wed, 04 Oct 2023 00:00:00 +0000</pubDate><guid>https://blog.zhouer.xyz/post/beginning/</guid><description>&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/nodoka_blog_shashinn.jpg" alt="Featured image of post 起源" />&lt;p>我的动力总是源自奇奇怪怪的地方。这一次是看&lt;a class="link" href="http://saki-anime.com/" target="_blank" rel="noopener"
+>天才麻将少女&lt;/a>时看到了小和打开的博客，似乎从这里感受到了“记录”的的意义，于是就搭了这个博客。&lt;/p></description></item><item><title>奔跑</title><link>https://blog.zhouer.xyz/post/chasing/</link><pubDate>Fri, 17 Feb 2023 00:00:00 +0000</pubDate><guid>https://blog.zhouer.xyz/post/chasing/</guid><description>&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/chasing_cover.png" alt="Featured image of post 奔跑" />&lt;p>家里下楼到公交车站大概有个六七十米的距离。&lt;/p>
+&lt;p>每次下楼远远看见刚刚到站的公交车都会默默叹一口气，然后维持原速走过去，走到一半，公交车就会开走。于是我每次都提醒自己，也许刚刚下楼时看见车到站，只要跑起来，就能赶上了。&lt;/p>
+&lt;p>但是想法归想法，每次遇到这种情况时，我的双腿像是被灌了铅似的迈不开，维持原速，就这样走过去，然后眼睁睁地看着车子开走。&lt;/p>
+&lt;p>上次出门，又见一辆公交车开来，我突然跑了起来，已经过了五秒，没有乘客上下车，果然跑起来也追不上啊。但是，司机看到奔跑的我，没有启动，而是等了我，于是我赶上了。&lt;/p>
+&lt;hr>
+&lt;p>&lt;a class="link" href="https://www.pixiv.net/artworks/116418300" target="_blank" rel="noopener"
+>封面出处&lt;/a>&lt;/p></description></item><item><title>祈愿之歌</title><link>https://blog.zhouer.xyz/post/pray/</link><pubDate>Wed, 11 May 2022 00:00:00 +0000</pubDate><guid>https://blog.zhouer.xyz/post/pray/</guid><description>&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/edu_idol.png" alt="Featured image of post 祈愿之歌" />&lt;style>
+.edu{
+transition-duration: 0.2s;
+transition-property: transform;
+}
+.edu:hover{
+transform:translateY(-15px);
+}
+.edu:active{
+transform:translateY(-15px);
+}
+&lt;/style>
+&lt;iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=3&amp;id=2488001464&amp;auto=1&amp;height=66">&lt;/iframe>
+&lt;p>&lt;a class="link" href="https://music.163.com/#/program?id=2488001464" target="_blank" rel="noopener"
+>《祈りノウタ》—— 网易云音乐&lt;/a>&lt;/p>
+&lt;p>在B站逛着逛着点进了μ恶毒的角色曲，还是熟悉的旋律，只是开头令我印象深刻的淡蓝色弹幕没看见了。&lt;/p>
+&lt;p>&amp;ldquo;祷及成约，艳艳其光&amp;rdquo;，正因为是生肉，所以我一直忘不了这句很有韵味的弹幕翻译，当时受它影响还专门跑去读了几篇诗经。&lt;/p>
+&lt;p>高中的周末是短暂的，星期天中午上完自习离校，晚上就要回去上晚自习，所以关于星期天下午的回忆，总是和&amp;quot;返校&amp;quot;这个词绑定在一起。&lt;/p>
+&lt;p>我想起了一个遥远的星期天下午，我就坐在床边听这首歌，听完了，收起耳机，关掉手机，转身和爸爸一起走了。等待我的是高三的新的一周，焦虑着，迷茫着，也憧憬着。&lt;/p>
+&lt;p>快毕业的时候班主任曾让我们全班对十年后的自己写下一封信，我现在已经基本回想不起信的内容了，脑子里只有这样几个影像:黄底的信纸，用第二人称写的，咄咄逼人的短句，还有恶毒。为什么会有恶毒?我也不太清楚，只是每次想起这张信纸，恶毒淡淡的紫色头发就会出现在我的脑海中。&lt;/p>
+&lt;p>那封信的内容，像是想给十年后的自己传达现在我的一切。在信中我想把我的现状，我的梦想，我的意志和情感，通通不遗余力地展示出来，那是倾注了强烈感情的文字。“十年后的自己，你能感受到吗？成功也好失败也好，我想把我的情感包裹在这个信封中，传达给你。”现在我终于敢承认了，那封信不仅是写给十年后自己的信，也是写给”当时的自己“的信。当时的我，一边拙劣地想象着，憧憬着，祈祷着，一边写下这些文字，企图梳理内心的渴望，进而激发一些动力。我在用自己的方式告诉自己：正视你的梦想，还有机会，为你的未来拼一把，诸如此类。&lt;/p>
+&lt;p>我经常和朋友说，碧蓝航线陪伴我度过了高中最艰难的时间段，我对这个游戏很有感情。得到最多的追问当然是“为什么？”或者“是怎样一种感情？”虽然我从来不能用语言将它们表达出来，我也想知道，为什么我听着这首歌，就想起了那封信，那段时光？为什么我从回忆中窥视那封信，又看到了恶毒？但是至少可以看出，它早已融入了我当时的生活，和我的情感紧紧联系在一起。也许，我听着这首歌，想到那样慵懒的恶毒小姐也能偶尔认真一回，被触动了吧；也许，我是看到这充满希望的歌词，被激励了吧；也许，仅仅是听到这个前奏动听的旋律，我的心弦就被拨动了。&lt;/p>
+&lt;p>遥远的星期天的下午，伴随着这个悠扬婉转的旋律，我透过卧室的纱窗，看着窗外的蓝天白云。我想看到我的未来，看到远方，短暂地逃离高三的压力，只是听着音乐……&lt;/p>
+&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/edu_ido_mini.png" alt="恶毒μ兵装" class="edu"></description></item></channel></rss>

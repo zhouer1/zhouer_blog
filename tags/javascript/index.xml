@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>JavaScript on 淍儿的博客</title><link>https://blog.zhouer.xyz/tags/javascript/</link><description>Recent content in JavaScript on 淍儿的博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 26 May 2024 14:08:00 +0000</lastBuildDate><atom:link href="https://blog.zhouer.xyz/tags/javascript/index.xml" rel="self" type="application/rss+xml"/><item><title>字符串不可变</title><link>https://blog.zhouer.xyz/post/post5/</link><pubDate>Sun, 26 May 2024 14:08:00 +0000</pubDate><guid>https://blog.zhouer.xyz/post/post5/</guid><description>&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/post5_cover.png" alt="Featured image of post 字符串不可变" />&lt;p>leetcode541，反转字符串Ⅱ，做题的时候遇到了问题：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="cm">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * @param {string} s
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * @param {number} k
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * @return {string}
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">var&lt;/span> &lt;span class="nx">reverseStr&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kd">function&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">s&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">k&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="kd">let&lt;/span> &lt;span class="nx">n&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">s&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">length&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="kd">let&lt;/span> &lt;span class="nx">start&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="kd">let&lt;/span> &lt;span class="nx">left&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">start&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">let&lt;/span> &lt;span class="nx">right&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">start&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nx">k&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="mi">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="k">while&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">start&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="nx">n&lt;/span>&lt;span class="p">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="c1">// 如果剩余字符少于 k 个，则将剩余字符全部反转
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>        &lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">right&lt;/span> &lt;span class="o">&amp;gt;=&lt;/span> &lt;span class="nx">n&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="nx">right&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">n&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="mi">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="k">while&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">left&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="nx">right&lt;/span>&lt;span class="p">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">            &lt;span class="kd">let&lt;/span> &lt;span class="nx">temp&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">s&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nx">left&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">            &lt;span class="nx">s&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nx">left&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">s&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nx">right&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">            &lt;span class="nx">s&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nx">right&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">temp&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">            &lt;span class="nx">left&lt;/span>&lt;span class="o">++&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">            &lt;span class="nx">right&lt;/span>&lt;span class="o">--&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="nx">start&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="mi">2&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="nx">k&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="nx">left&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">start&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="nx">right&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">start&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nx">k&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="mi">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">   
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="k">return&lt;/span> &lt;span class="nx">s&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">};&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这段代码逻辑没有问题，但是不通过，根据调试结果显示，所有测试用例返回的字符串与输入相同，未被更改&lt;/p>
+&lt;p>因为刚刚才做了344题反转字符串，题目要求直接在字符串s上修改，所以没太在意，直接沿用了思路，后面仔细一对比才发现344题给出的是字符串数组，而这道题给出的是字符串&lt;/p>
+&lt;p>查资料发现JS的字符串&lt;strong>不可变&lt;/strong>,不能直接对字符进行修改（怎么以前一直没注意到这个问题，不禁怀疑自己到底写了些什么代码&amp;hellip;）&lt;/p>
+&lt;p>字符串不可变是由于字符串(string)在JavaScript中属于&lt;strong>原始值&lt;/strong>&lt;/p>
+&lt;p>原始值不可变：JavaScript中的原始值（primitive values）包括字符串、数字、布尔值等，它们是不可变的。对原始值进行操作时，实际上是在创建一个新的值，而不是改变原始值本身
+引用值可变：引用值（reference values）如对象和数组是可变的，因为它们存储的是引用（地址），可以直接修改对象或数组的内容&lt;/p>
+&lt;p>当我们对一个字符串进行操作时，比如拼接、裁剪、替换等，实际上是创建了一个新的字符串，原始字符串并没有被改变&lt;/p>
+&lt;p>如果要改变字符串的值，方式是创建一个新的字符串，并分配给原来的变量&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">let&lt;/span> &lt;span class="nx">str&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;Hi&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">str&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;h&amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nx">str&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">console&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">log&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">str&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1">//hi
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>回到一开始的题，我们把字符串转为数组，处理之后再转回来，就可以通过了：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">var&lt;/span> &lt;span class="nx">reverseStr&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kd">function&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">s&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">k&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="kd">let&lt;/span> &lt;span class="nx">arr&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[...&lt;/span>&lt;span class="nx">s&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="kd">let&lt;/span> &lt;span class="nx">n&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">arr&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">length&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="kd">let&lt;/span> &lt;span class="nx">start&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="kd">let&lt;/span> &lt;span class="nx">left&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">start&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="kd">let&lt;/span> &lt;span class="nx">right&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">start&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nx">k&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="mi">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="k">while&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">start&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="nx">n&lt;/span>&lt;span class="p">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="c1">// 如果剩余字符少于 k 个，则将剩余字符全部反转
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>        &lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">right&lt;/span> &lt;span class="o">&amp;gt;=&lt;/span> &lt;span class="nx">n&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="nx">right&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">n&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="mi">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="k">while&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">left&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="nx">right&lt;/span>&lt;span class="p">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">            &lt;span class="kd">let&lt;/span> &lt;span class="nx">temp&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">arr&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nx">left&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">            &lt;span class="nx">arr&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nx">left&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">arr&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nx">right&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">            &lt;span class="nx">arr&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nx">right&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">temp&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">            &lt;span class="nx">left&lt;/span>&lt;span class="o">++&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">            &lt;span class="nx">right&lt;/span>&lt;span class="o">--&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="nx">start&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="mi">2&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="nx">k&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="nx">left&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">start&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">        &lt;span class="nx">right&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">start&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nx">k&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="mi">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">    &lt;span class="k">return&lt;/span> &lt;span class="nx">arr&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">join&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">};&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item><item><title>一张JSmeme图分析</title><link>https://blog.zhouer.xyz/post/post2/</link><pubDate>Fri, 19 Apr 2024 21:10:00 +0000</pubDate><guid>https://blog.zhouer.xyz/post/post2/</guid><description>&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/post2_cover.jpg" alt="Featured image of post 一张JSmeme图分析" />&lt;p>在群里看到了这张吊图:&lt;/p>
+&lt;p>&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/post2_1.jpg"
+loading="lazy"
+alt="post2_1"
+>&lt;/p>
+&lt;p>不得不说JS不愧是弱类型的语言，主打的就是一个动态。不过这张meme图其实就是一个逻辑误导，毕竟JS中的&lt;code>==&lt;/code>和数学中的&lt;code>=&lt;/code>符号是两个完全不同的东西。使用双等修饰的表达式并不是一个等式，而是可能会经过&lt;strong>类型转换&lt;/strong>的一个式子，它不具备等式的特性所以不能进行换算操作。&lt;/p>
+&lt;p>两个动作：&lt;/p>
+&lt;ol>
+&lt;li>类型转换&lt;/li>
+&lt;li>值的比较&lt;/li>
+&lt;/ol>
+&lt;p>JS类型转换和比较规则非常复杂，通常情况下我们不必了解的那么详细。要是项目中产生了奇怪的转换和比较的场景，那我只能认为是功能本身的构思不合理，或者程序员的水平有待商榷&lt;del>才不是因为懒呢&lt;/del>&lt;/p>
+&lt;p>但是我们可以分析一下上面三个表达式在比较时究竟发生了什么&lt;/p>
+&lt;p>比较0 == &amp;ldquo;0&amp;quot;时：&lt;/p>
+&lt;ol>
+&lt;li>由于值的类型不同，JS尝试将字符串转换为数字进行比较，所以将&amp;quot;0&amp;quot;转为0&lt;/li>
+&lt;li>比较0 == 0，此时类型相同，值相同，返回true&lt;/li>
+&lt;/ol>
+&lt;p>比较0 == []时：&lt;/p>
+&lt;ol>
+&lt;li>由于值的类型不同，首先触发数组的to primitive隐式转换，调用数组的valueOf()方法，返回数组本身，没有达到类型转换的效果，继而调用toString()方法，返回&amp;rdquo;&amp;quot;&lt;/li>
+&lt;li>比较0 == &amp;ldquo;0&amp;rdquo;，与上面的情况相同，返回true&lt;/li>
+&lt;/ol>
+&lt;p>比较&amp;quot;0&amp;quot; == []时：&lt;/p>
+&lt;ol>
+&lt;li>与上面情况相同，由于值的类型不同，首先触发数组的to promitive隐式转换，调用数组的valueOf()方法，返回数组本身，没有达到类型转换的效果，继而调用toString()方法，返回&amp;quot;&amp;quot;&lt;/li>
+&lt;li>这样就变成了字符串之间的比较&amp;quot;0&amp;quot; == &amp;ldquo;&amp;quot;，因为它们类型相同，所以不会发生类型转换，JS会比较它们的字符序列是否相等，结果是不相等，所以返回false&lt;/li>
+&lt;/ol>
+&lt;p>然后又刷到了这张图：&lt;/p>
+&lt;p>&lt;img src="https://cdn.jsdelivr.net/gh/zhouer1/resource/img/post2_2.png"
+loading="lazy"
+alt="post2_2"
+>&lt;/p>
+&lt;p>已经没什么好说的了，&lt;strong>ⒿＳ’Nb‘，峩亻爱ⒿаぴаＳСRīㄗㄒ!!!！&lt;/strong>&lt;/p></description></item></channel></rss>
